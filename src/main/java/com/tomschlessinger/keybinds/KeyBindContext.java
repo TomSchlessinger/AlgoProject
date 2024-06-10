@@ -8,4 +8,8 @@ public record KeyBindContext(long window, int action, int scancode, int mods) {
     public static KeyBindContext create(long window, int action, int scancode, int mods){
         return new KeyBindContext(window, action, scancode, mods);
     }
+    public String toString(){
+        return "window: " + window + "\naction" + action + "\nscancode" + scancode + "\nmods" + mods;
+
+    }
 }

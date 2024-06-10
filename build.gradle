@@ -1,5 +1,6 @@
 plugins {
     id 'java'
+    id 'com.github.johnrengelman.shadow' version '8.1.1'
 }
 
 group = 'com.tomschlessinger'
@@ -7,6 +8,9 @@ version = '1.0-SNAPSHOT'
 
 repositories {
     mavenCentral()
+    maven {
+        url 'https://repo.clojars.org/'
+    }
 }
 
 project.ext.lwjglVersion = "3.3.3"
@@ -103,8 +107,7 @@ dependencies {
     runtimeOnly "org.lwjgl:lwjgl-xxhash::$lwjglNatives"
     runtimeOnly "org.lwjgl:lwjgl-yoga::$lwjglNatives"
     runtimeOnly "org.lwjgl:lwjgl-zstd::$lwjglNatives"
-}
 
-test {
-    useJUnitPlatform()
+    implementation 'slick-util:slick-util:1.0.0'
+    implementation 'org.slick2d:slick2d-core:1.0.1'
 }

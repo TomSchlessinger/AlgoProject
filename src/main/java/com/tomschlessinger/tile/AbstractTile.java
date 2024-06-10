@@ -1,31 +1,30 @@
 package com.tomschlessinger.tile;
 
 
-import org.lwjgl.openvr.Texture;
-
-import javax.imageio.ImageIO;
-import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.IOException;
+import com.tomschlessinger.texture.Texture;
 
 public abstract class AbstractTile {
-    private final String texture;
+    private final String textureFile;
     private final String id;
+    private final Texture texture;
     public AbstractTile(String s, String texturePath){
-        texture = texturePath;
+        textureFile = texturePath;
         id=s;
+        texture = texturePath == null ? null : new Texture(getTexturePath());
+
     }
     public String getId(){return id;}
-    public String getTexturePath(){return "/assets/textures/tiles/" + texture;}
-    public static BufferedImage getImage(AbstractTile tile){
-        try {
-            BufferedImage image = ImageIO.read(new File("assets/textures/tiles/" + tile.getTexturePath()));
-            return image;
-        } catch (IOException e) {
-            System.out.println("Could not load texture");
-        }
-        return null;
+    public String getTexturePath(){return "/assets/textures/tiles/" + textureFile;}
+
+    public Texture getTexture() {
+        return texture;
     }
+
+    public void bind(){
+        if(texture!=null)texture.bind();
+    }
+
+    public String getTextureFile(){return textureFile;}
 
     public String toString(){
         return String.copyValueOf(new char[]{this.id.toCharArray()[0]});
