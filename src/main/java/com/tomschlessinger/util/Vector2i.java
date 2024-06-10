@@ -15,16 +15,19 @@ public class Vector2i {
         this.y=v.y;
     }
 
-    public void setX(int x) {
+    public Vector2i setX(int x) {
         this.x = x;
+        return this;
     }
 
-    public void setY(int y) {
+    public Vector2i setY(int y) {
         this.y = y;
+        return this;
     }
-    public void set(Vector2i v){
+    public Vector2i set(Vector2i v){
         this.x=v.x;
         this.y=v.y;
+        return this;
     }
 
     public int getX() {
@@ -82,6 +85,11 @@ public class Vector2i {
     }
     public Vector2i copy(){
         return new Vector2i(this);
+    }
+    public Vector2i mod(int n){
+        x%=n;
+        y%=n;
+        return this;
     }
 
     @Override

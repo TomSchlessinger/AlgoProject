@@ -94,7 +94,7 @@ public class Font {
         }
         int height = lines * fontHeight;
 
-        float drawX = x;
+//        float drawX = x;
 
     }
 }

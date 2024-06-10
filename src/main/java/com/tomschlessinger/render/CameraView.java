@@ -39,13 +39,22 @@ public class CameraView {
     public void renderWorld(int width, int height) {
         renderingQueue.clear();
 //        System.out.println("DRAWING SHIT FROM " + pos.copy() + " to " + pos.copy().add(width,height));
-        for(int x = 0; x < width; x+=Main.TEXTURE_SIZE) {
-            for(int y = 0; y < height; y+=Main.TEXTURE_SIZE){ //x,y are pos on the screen; pos + x,y --> world position; (pos+x,y)/32 --> block pos
+//        for(int x = -1; x < width/Main.TEXTURE_SIZE+1; x++){
+//            for(int y = -1; y < height/Main.TEXTURE_SIZE+1; y++){
+//                AbstractTile tile = world.getTile(pos.copy().add(x,y));
+//                if(!renderingQueue.containsKey(tile)){
+//                    renderingQueue.put(tile, new HashSet<>());
+//                }
+//                renderingQueue.get(tile).add(new Vector2i(x*Main.TEXTURE_SIZE,y*Main.TEXTURE_SIZE+pos.getY()%32));
+//            }
+//        }
+        for(int x = -Main.TEXTURE_SIZE; x < width+Main.TEXTURE_SIZE; x+=Main.TEXTURE_SIZE) {
+            for(int y = -Main.TEXTURE_SIZE; y < height+Main.TEXTURE_SIZE; y+=Main.TEXTURE_SIZE){ //x,y are pos on the screen; pos + x,y --> world position; (pos+x,y)/32 --> block pos
                 AbstractTile tile = world.getTile(pos.copy().add(x,y).divide(Main.TEXTURE_SIZE));
                 if(!renderingQueue.containsKey(tile)){
                     renderingQueue.put(tile, new HashSet<>());
                 }
-                renderingQueue.get(tile).add(new Vector2i(x,y));
+                renderingQueue.get(tile).add(new Vector2i(x,y).subtract(pos.copy().mod(Main.TEXTURE_SIZE)));
             }
         }
 //        System.out.println("TILE AT " + pos.copy().divide(Main.TEXTURE_SIZE) + " is " + world.getTile(pos.copy().divide(Main.TEXTURE_SIZE)) );

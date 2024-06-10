@@ -1,6 +1,7 @@
 package com.tomschlessinger.world;
 
 import com.tomschlessinger.Main;
+import com.tomschlessinger.player.Player;
 import com.tomschlessinger.tile.AbstractTile;
 import com.tomschlessinger.tile.TileRegistry;
 import com.tomschlessinger.util.Vector2i;
@@ -50,12 +51,16 @@ public class World{
     }
 
     public void generate(int init){
-        for(int x = init; x < init+Main.SCREEN_WIDTH; x+=Main.TEXTURE_SIZE) {
+        for(int x = init-2*Main.TEXTURE_SIZE; x < init+Main.SCREEN_WIDTH+2*Main.TEXTURE_SIZE; x+=Main.TEXTURE_SIZE) {
             if(!generator.generated(x/Main.TEXTURE_SIZE)){
                 //System.out.println("generated blocks at x pos " + x/Main.TEXTURE_SIZE);
                 generator.generate(x/ Main.TEXTURE_SIZE);
             }
 
+
         }
+    }
+
+    public void tick(){
     }
 }
