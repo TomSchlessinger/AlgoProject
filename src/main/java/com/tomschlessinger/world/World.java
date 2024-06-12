@@ -35,6 +35,15 @@ public class World{
         return getTile(pos.getX(),pos.getY());
     }
 
+    public boolean isAir(Vector2i pos){
+        return !tiles.containsKey(pos.getX(),pos.getY()) || tiles.get(pos.getX(),pos.getY()).equals(TileRegistry.getTile("air"));
+    }
+    public boolean isAir(int x, int y){
+        System.out.println("contans key " + tiles.containsKey(x,y));
+        System.out.println("is fuckin air " + tiles.get(x,y));
+        return !tiles.containsKey(x,y) || tiles.get(x,y).equals(TileRegistry.getTile("air"));
+    }
+
     public void setTile(int x, int y, AbstractTile t){
         tiles.put(x,y,t);
     }

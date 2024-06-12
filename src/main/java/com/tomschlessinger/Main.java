@@ -61,7 +61,7 @@ public class Main {
         TileRegistry.init();
         world = new World(WORLD_HEIGHT);
         camera = new CameraView(world);
-        player = new Player("ginger_runner_32.png",world);
+        player = new Player(camera,"ginger_runner_32.png",world);
 //        terrainGenerator = new TerrainGenerator(world, WORLD_HEIGHT, System.currentTimeMillis());
         initKeyBinds();
 //        bufferImages();
@@ -119,10 +119,24 @@ public class Main {
         KeyBinds.registerKey(GLFW_KEY_ESCAPE, context -> {
             if (context.getAction() == GLFW_RELEASE) glfwSetWindowShouldClose(context.getWindow(), true);
         });
-        KeyBinds.registerKey(GLFW_KEY_D, context -> camera.move(delta, 0),true);
-        KeyBinds.registerKey(GLFW_KEY_A, context -> camera.move(-delta, 0),true);
-        KeyBinds.registerKey(GLFW_KEY_W, context -> camera.move(0, delta),true);
-        KeyBinds.registerKey(GLFW_KEY_S, context -> camera.move(0, -delta),true);
+        KeyBinds.registerKey(GLFW_KEY_D, context -> {
+            player.move(delta, 0);
+            player.accelerate(-delta,0);
+        },true);
+        KeyBinds.registerKey(GLFW_KEY_A, context -> {
+                    player.move(-delta, 0);
+                    player.accelerate(delta,0);
+                }
+                ,true);
+
+        KeyBinds.registerKey(GLFW_KEY_W, context -> {
+            player.move(0, delta);
+            player.accelerate(0,-delta);
+        }, true);
+        KeyBinds.registerKey(GLFW_KEY_S, context -> {
+            player.move(0, -delta);
+            player.accelerate(0,delta);
+        },true);
 
     }
 
@@ -147,7 +161,10 @@ public class Main {
         long elapsedMSPFCounter;//FPS Counter
         long elapsedMSPT;//TPS Cap
         long elapsedMSPTCounter;//TPS Counter
+        camera.move(0,32*450);
         while (!glfwWindowShouldClose(window)) {
+            player.tick();
+            world.tick();
             long time2 = Timer.getMillis();
             elapsedMSPF = time2-timerFPS;
             elapsedMSPFCounter = time2-timerFPS2;
@@ -174,7 +191,6 @@ public class Main {
                             }
                         }
                 );
-                world.tick();
                 tps++;
             }else{
                 KeyBinds.pressed.forEach(
@@ -223,6 +239,7 @@ public class Main {
     private void render() {
         camera.renderWorld(SCREEN_WIDTH, SCREEN_HEIGHT);
         player.render();
+        //player.render();
     }
 
     public static void main(String[] args) {

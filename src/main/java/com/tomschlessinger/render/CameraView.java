@@ -23,13 +23,14 @@ public class CameraView {
     public CameraView(World world) {
         this.world = world;
         offset = new Vector2i(Main.SCREEN_WIDTH/2,Main.SCREEN_HEIGHT/2);
-        pos = Vector2i.ZERO.copy().subtract(0,0);
+        pos = Vector2i.ZERO.copy();
         renderingQueue = new HashMap<>();
+    }
+    public void move(Vector2i vec){
+        pos.add(vec);
     }
     public void move(int dx, int dy) {
         pos.add(dx,dy);
-//        System.out.println("camera pos: (" + (pos.getX()+offset.getX()) + ", " + (pos.getY()+offset.getY()) + ")");
-//        System.out.println("actual pos: (" + (200-pos.getX())+ ", " + (200-pos.getY()) + ")");
     }
 
     public void zoom(float delta) {
@@ -38,16 +39,6 @@ public class CameraView {
 
     public void renderWorld(int width, int height) {
         renderingQueue.clear();
-//        System.out.println("DRAWING SHIT FROM " + pos.copy() + " to " + pos.copy().add(width,height));
-//        for(int x = -1; x < width/Main.TEXTURE_SIZE+1; x++){
-//            for(int y = -1; y < height/Main.TEXTURE_SIZE+1; y++){
-//                AbstractTile tile = world.getTile(pos.copy().add(x,y));
-//                if(!renderingQueue.containsKey(tile)){
-//                    renderingQueue.put(tile, new HashSet<>());
-//                }
-//                renderingQueue.get(tile).add(new Vector2i(x*Main.TEXTURE_SIZE,y*Main.TEXTURE_SIZE+pos.getY()%32));
-//            }
-//        }
         for(int x = -Main.TEXTURE_SIZE; x < width+Main.TEXTURE_SIZE; x+=Main.TEXTURE_SIZE) {
             for(int y = -Main.TEXTURE_SIZE; y < height+Main.TEXTURE_SIZE; y+=Main.TEXTURE_SIZE){ //x,y are pos on the screen; pos + x,y --> world position; (pos+x,y)/32 --> block pos
                 AbstractTile tile = world.getTile(pos.copy().add(x,y).divide(Main.TEXTURE_SIZE));
@@ -87,5 +78,13 @@ public class CameraView {
 
     public Vector2i getWorldPos(){
         return pos.copy();
+    }
+    public Vector2i getRealPos() {
+        return pos.copy().add(offset);
+    }
+    public String toString(){return pos.toString();}
+
+    public Vector2i getPos(){
+        return pos;
     }
 }

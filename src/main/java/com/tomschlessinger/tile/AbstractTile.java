@@ -27,6 +27,6 @@ public abstract class AbstractTile {
     public String getTextureFile(){return textureFile;}
 
     public String toString(){
-        return String.copyValueOf(new char[]{this.id.toCharArray()[0]});
+        return this.id;
     }
 }
