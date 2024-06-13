@@ -39,7 +39,7 @@ import static org.lwjgl.system.MemoryUtil.*;
 
 public class Main {
     public static double TICKS_PER_SECOND = -1;
-    public static int MAX_FPS = -1;//100 -> 80; 60 -> 54; 240 -> 137
+    public static int MAX_FPS = -1;
     public static final int TEXTURE_SIZE = 32;//in px
 //    public static int drawn = 0;
     public static Collection<AbstractTile> tiles;
@@ -50,18 +50,15 @@ public class Main {
     private long window;
 //    private TerrainGenerator terrainGenerator;
     private World world;
-    private CameraView camera;
     private Player player;
 //    public static final HashMap<AbstractTile,ByteBuffer> imageBuffers = new HashMap<>();
-
     public void run() {
         System.out.println("Hello LWJGL " + Version.getVersion() + "!");
 
         init();
         TileRegistry.init();
-        world = new World(WORLD_HEIGHT);
-        camera = new CameraView(world);
-        player = new Player(camera,"ginger_runner_32.png",world);
+        player = new Player("ginger_runner_32.png");
+        world = new World(WORLD_HEIGHT,player);
 //        terrainGenerator = new TerrainGenerator(world, WORLD_HEIGHT, System.currentTimeMillis());
         initKeyBinds();
 //        bufferImages();
@@ -121,26 +118,23 @@ public class Main {
         });
         KeyBinds.registerKey(GLFW_KEY_D, context -> {
             player.move(delta, 0);
-            player.accelerate(-delta,0);
         },true);
         KeyBinds.registerKey(GLFW_KEY_A, context -> {
                     player.move(-delta, 0);
-                    player.accelerate(delta,0);
                 }
                 ,true);
 
         KeyBinds.registerKey(GLFW_KEY_W, context -> {
             player.move(0, delta);
-            player.accelerate(0,-delta);
         }, true);
         KeyBinds.registerKey(GLFW_KEY_S, context -> {
             player.move(0, -delta);
-            player.accelerate(0,delta);
         },true);
 
     }
 
     private void loop() {
+        CameraView camera = world.getCamera();
         double fps = 0;
         double tps = 0;
 
@@ -161,9 +155,7 @@ public class Main {
         long elapsedMSPFCounter;//FPS Counter
         long elapsedMSPT;//TPS Cap
         long elapsedMSPTCounter;//TPS Counter
-        camera.move(0,32*450);
         while (!glfwWindowShouldClose(window)) {
-            player.tick();
             world.tick();
             long time2 = Timer.getMillis();
             elapsedMSPF = time2-timerFPS;
@@ -236,10 +228,8 @@ public class Main {
         world.generate(init);
     }
 
-    private void render() {
-        camera.renderWorld(SCREEN_WIDTH, SCREEN_HEIGHT);
-        player.render();
-        //player.render();
+    private void render(){
+        world.render();
     }
 
     public static void main(String[] args) {

@@ -1,6 +1,6 @@
 package com.tomschlessinger.collision;
 
-import com.tomschlessinger.util.Vector2f;
+import org.joml.Vector2f;
 
 public class Collision {
 	public Vector2f distance;

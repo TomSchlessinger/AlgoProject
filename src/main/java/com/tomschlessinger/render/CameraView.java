@@ -2,6 +2,8 @@ package com.tomschlessinger.render;
 
 import com.tomschlessinger.Main;
 import com.tomschlessinger.tile.AbstractTile;
+import com.tomschlessinger.tile.TileState;
+import com.tomschlessinger.util.Vector2f;
 import com.tomschlessinger.util.Vector2i;
 import com.tomschlessinger.world.World;
 
@@ -15,14 +17,14 @@ import java.util.Set;
 import static org.lwjgl.opengl.GL11.*;
 
 public class CameraView {
-    private final Map<AbstractTile, Set<Vector2i>> renderingQueue;
+    private final Map<TileState, Set<Vector2i>> renderingQueue;
     private final Vector2i pos;
     private final Vector2i offset;
     private float zoom = 1;
     private final World world;
     public CameraView(World world) {
         this.world = world;
-        offset = new Vector2i(Main.SCREEN_WIDTH/2,Main.SCREEN_HEIGHT/2);
+        offset = Vector2i.ZERO.copy().add(0,32*450);
         pos = Vector2i.ZERO.copy();
         renderingQueue = new HashMap<>();
     }
@@ -41,18 +43,20 @@ public class CameraView {
         renderingQueue.clear();
         for(int x = -Main.TEXTURE_SIZE; x < width+Main.TEXTURE_SIZE; x+=Main.TEXTURE_SIZE) {
             for(int y = -Main.TEXTURE_SIZE; y < height+Main.TEXTURE_SIZE; y+=Main.TEXTURE_SIZE){ //x,y are pos on the screen; pos + x,y --> world position; (pos+x,y)/32 --> block pos
-                AbstractTile tile = world.getTile(pos.copy().add(x,y).divide(Main.TEXTURE_SIZE));
+                TileState tile = world.getTile(getPos().add(x,y).divide(Main.TEXTURE_SIZE));
                 if(!renderingQueue.containsKey(tile)){
                     renderingQueue.put(tile, new HashSet<>());
                 }
-                renderingQueue.get(tile).add(new Vector2i(x,y).subtract(pos.copy().mod(Main.TEXTURE_SIZE)));
+
+
+                renderingQueue.get(tile).add(new Vector2i(x,y).add(getPos().getX()%32,1-(getPos().getY()-1)%32));
             }
         }
 //        System.out.println("TILE AT " + pos.copy().divide(Main.TEXTURE_SIZE) + " is " + world.getTile(pos.copy().divide(Main.TEXTURE_SIZE)) );
 //        System.out.println("TILE AT " + pos.copy().add(width,height).divide(Main.TEXTURE_SIZE) + " is " + world.getTile(pos.copy().add(width,height).divide(Main.TEXTURE_SIZE)));
         renderingQueue.forEach(
                 (tile, posList) -> {
-                    tile.bind();
+                    tile.getTile().bind();
                     glBegin(GL_QUADS);
                     posList.forEach(
                             p -> {
@@ -76,15 +80,19 @@ public class CameraView {
         );
     }
 
+
+
     public Vector2i getWorldPos(){
-        return pos.copy();
+        return getPos();
     }
-    public Vector2i getRealPos() {
+    public Vector2i getPos() {
         return pos.copy().add(offset);
     }
-    public String toString(){return pos.toString();}
-
-    public Vector2i getPos(){
-        return pos;
+    public void setPos(Vector2i vec){
+        this.pos.set(vec);
     }
+    public Vector2i getOffset(){
+        return offset;
+    }
+    public String toString(){return getPos().toString();}
 }

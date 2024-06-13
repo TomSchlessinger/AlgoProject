@@ -7,20 +7,21 @@ import java.util.Set;
 
 public class TileRegistry {
     public static final Map<String,AbstractTile> tiles = new HashMap<>();
-    static  {
+
+    public static void init(){
         register("dirt","dirt.png");
-        register("air","air.png");//(String)null);
+        register("air","air.png", new TileOptions().setSolid(false));//(String)null);
         register("grass","grass.png");
         register("stone","stone.png");
         register("hell","hell2.png");
         register("hard_stone","hard_stone.png");
     }
-
-    public static void init(){
-    }
     public TileRegistry(){
     }
 
+    public static AbstractTile register(String s, String texturePath, TileOptions options){
+        return tiles.put(s,new GenericTile(s,texturePath, options));
+    }
     public static AbstractTile register(String s, String texturePath){
         return tiles.put(s,new GenericTile(s,texturePath));
     }

@@ -29,6 +29,11 @@ public class Vector2i {
         this.y=v.y;
         return this;
     }
+    public Vector2i set(int x, int y){
+        this.x=x;
+        this.y=y;
+        return this;
+    }
 
     public int getX() {
         return x;

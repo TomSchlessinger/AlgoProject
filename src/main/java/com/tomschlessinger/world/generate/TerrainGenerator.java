@@ -1,10 +1,14 @@
 package com.tomschlessinger.world.generate;
 
+import com.tomschlessinger.Main;
+import com.tomschlessinger.collision.BoundingBox;
 import com.tomschlessinger.random.PerlinNoiseGenerator;
 import com.tomschlessinger.tile.AbstractTile;
 import com.tomschlessinger.tile.TileRegistry;
+import com.tomschlessinger.tile.TileState;
 import com.tomschlessinger.util.Vector2i;
 import com.tomschlessinger.world.World;
+import org.joml.Vector2f;
 
 import java.util.*;
 
@@ -34,30 +38,50 @@ public class TerrainGenerator {
     //caves --> y < 0 ---- dirt -> stone then cave carver will do its thing
     //cave carver can be a modified dfs
     public void generateSurface(int x){
-        for(int i = CAVE_DEPTH; i < SURFACE_HEIGHT; i++){
-            world.setTile(x,i, TileRegistry.getTile("dirt"));
+        for(int y = CAVE_DEPTH; y < SURFACE_HEIGHT; y++){
+            world.setTile(x,y,
+                    new TileState(new BoundingBox(new Vector2f(x,-getRealY(y)), new Vector2f(16f)),
+                        TileRegistry.getTile("dirt"))
+            );
         }
         surface.put(x,5d*noise.noise(x/10f,SURFACE_HEIGHT/10f)+5f);
         //System.out.println("surface: " + surface);
-        for(int i = SURFACE_HEIGHT; i < SURFACE_HEIGHT+surface.get(x); i++){
-            world.setTile(x,i, TileRegistry.getTile("grass"));
+        for(int y = SURFACE_HEIGHT; y < SURFACE_HEIGHT+surface.get(x); y++){
+            world.setTile(x,y,
+                    new TileState(new BoundingBox(new Vector2f(x, getRealY(y)), new Vector2f(16f)),
+                            TileRegistry.getTile("grass"))
+            );
         }
     }
     public void generateCaves(int x){
-        for(int i = DEEP_CAVE_DEPTH; i < CAVE_DEPTH; i++){
-            world.setTile(x, i, TileRegistry.getTile("stone"));
+        for(int y = DEEP_CAVE_DEPTH; y < CAVE_DEPTH; y++){
+            world.setTile(x,y,
+                    new TileState(new BoundingBox(new Vector2f(x,getRealY(y)), new Vector2f(16f)),
+                            TileRegistry.getTile("stone"))
+            );
         }
     }
     public void generateDeepCaves(int x){
-        for(int i = HELL_DEPTH; i < DEEP_CAVE_DEPTH; i++){
-            world.setTile(x, i, TileRegistry.getTile("hard_stone"));
+        for(int y = HELL_DEPTH; y < DEEP_CAVE_DEPTH; y++){
+            world.setTile(x,y,
+                    new TileState(new BoundingBox(new Vector2f(x,getRealY(y)), new Vector2f(16f)),
+                            TileRegistry.getTile("hard_stone"))
+            );
         }
     }
     public void generateHell(int x){
-        for(int i = 0; i < HELL_DEPTH; i++){
-            world.setTile(x, i, TileRegistry.getTile("hell"));
+        for(int y = 0; y < HELL_DEPTH; y++){
+            world.setTile(x,y,
+                    new TileState(new BoundingBox(new Vector2f(x,getRealY(y)), new Vector2f(16f)),
+                            TileRegistry.getTile("hell"))
+            );
         }
     }
+
+    public int getRealY(int y){
+        return y-(world.getCamera().getOffset().getY() + world.getHeight()/2)/32;
+    }
+
     public void generate(int x) {
         generated.add(x);
         generateSurface(x);
