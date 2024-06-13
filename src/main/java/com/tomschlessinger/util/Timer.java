@@ -5,7 +5,7 @@ public class Timer {
         return System.nanoTime() / 1000000000d;
     }
     public static long getMillis(){
-        return System.currentTimeMillis();
+        return System.nanoTime()/1000000;
     }
     public static long getNanos(){
         return System.nanoTime();

@@ -24,7 +24,7 @@ public class CameraView {
     private final World world;
     public CameraView(World world) {
         this.world = world;
-        offset = Vector2i.ZERO.copy().add(0,32*450);
+        offset = Vector2i.ZERO.copy().add(20,32*390);
         pos = Vector2i.ZERO.copy();
         renderingQueue = new HashMap<>();
     }
@@ -47,9 +47,8 @@ public class CameraView {
                 if(!renderingQueue.containsKey(tile)){
                     renderingQueue.put(tile, new HashSet<>());
                 }
-
-
-                renderingQueue.get(tile).add(new Vector2i(x,y).add(getPos().getX()%32,1-(getPos().getY()-1)%32));
+//pos.copy().mod(Main.TEXTURE_SIZE)
+                renderingQueue.get(tile).add(new Vector2i(x,y).subtract((pos.getX())%32,(1+pos.getY())%32));
             }
         }
 //        System.out.println("TILE AT " + pos.copy().divide(Main.TEXTURE_SIZE) + " is " + world.getTile(pos.copy().divide(Main.TEXTURE_SIZE)) );

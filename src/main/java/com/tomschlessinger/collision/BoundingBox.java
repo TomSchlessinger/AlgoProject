@@ -35,7 +35,7 @@ public class BoundingBox {
 	public Vector2f correctPosition2(BoundingBox box2, Collision data, Player p) {
 		System.out.println(this);
 		System.out.println(box2);
-		Vector2f correctionDistance = this.center.sub(box2.center, new Vector2f());
+		Vector2f correctionDistance = box2.center.sub(this.center, new Vector2f());
 		Vector2f ret = new Vector2f(center);
 		if (correctionDistance.x > 0) {
 			ret.add(data.distance.x, 0);

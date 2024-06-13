@@ -162,14 +162,14 @@ public class Main {
             elapsedMSPFCounter = time2-timerFPS2;
             if((int)(elapsedMSPFCounter/1000)>=1){
                 timerFPS2 = time2;
-                System.out.println("fps = " + fps);
+//                System.out.println("fps = " + fps);
                 fps = 0;
             }
             elapsedMSPT = time2-timerTPS;
             elapsedMSPTCounter = time2-timerTPS2;
             if((int)(elapsedMSPTCounter/1000)>=1){
                 timerTPS2 = time2;
-                System.out.println("tps = " + tps);
+//                System.out.println("tps = " + tps);
                 tps = 0;
             }
 
@@ -193,12 +193,12 @@ public class Main {
                             }
                         }
                 );
-                world.tick();
                 tps++;
             }
 
 
-            generateTerrain(camera.getWorldPos().getX());
+            generateTerrain(camera.getWorldPos().getX(), camera.getWorldPos().getY());
+            world.getCaveGenerator().generateCave(30,400,10);
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
             if(MAX_FPS > 0){
@@ -223,9 +223,9 @@ public class Main {
         }
     }
 
-    public void generateTerrain(int init){
+    public void generateTerrain(int init,int initY){
         //Vector2i pos = camera.getWorldPos();
-        world.generate(init);
+        world.generate(init, initY);
     }
 
     private void render(){

@@ -62,10 +62,10 @@ public class Texture {
 //            }
             int error = glGetError();
             if (error != GL_NO_ERROR) {
-                System.err.println("Texture creation error: " + error);
+                System.err.println("Texture erro: " + error);
             }
         } catch (IOException e){
-            System.out.println("the image wasn't found at " + filename);
+            System.out.println("image no exist at " + filename);
         }
         System.out.println("file " + filename + " has an id of " + id);
 

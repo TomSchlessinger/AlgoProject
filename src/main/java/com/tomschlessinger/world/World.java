@@ -8,10 +8,13 @@ import com.tomschlessinger.tile.AbstractTile;
 import com.tomschlessinger.tile.TileRegistry;
 import com.tomschlessinger.tile.TileState;
 import com.tomschlessinger.util.Vector2i;
+import com.tomschlessinger.world.generate.CaveGenerator;
 import com.tomschlessinger.world.generate.TerrainGenerator;
 import org.joml.Vector2f;
 
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Set;
 
 import static com.tomschlessinger.util.HashMapPair.Vector2iHashMap;
 
@@ -19,17 +22,20 @@ public class World{
     //private final int width;
     private final Player player;
     private final TerrainGenerator generator;
+    private final CaveGenerator caveGenerator;
     private final int height;
     private final Vector2iHashMap<TileState> tiles = new Vector2iHashMap<>();
     private final CameraView camera;
     //private final HashMapPair<Integer, Integer, AbstractTile> tiles = new HashMapPair<>();
     public World(int height, Player player){
+        long seed = System.currentTimeMillis();
+        caveGenerator = new CaveGenerator(this,seed);
 //        this.width=width;
         this.camera = new CameraView(this);
         player.setCamera(camera);
         this.player=player;
         this.height=height;
-        generator = new TerrainGenerator(this,height,System.currentTimeMillis());
+        generator = new TerrainGenerator(this,height,seed);
     }
 
     public int getHeight(){return height;}
@@ -68,20 +74,27 @@ public class World{
         return ret.toString();
     }
 
-    public void generate(int init){
+    public void generate(int init, int initY){
+        System.out.println("init: " + init + " y " + initY);
+        Set<org.joml.Vector2i> vec = new HashSet<>();
         for(int x = init-2*Main.TEXTURE_SIZE; x < init+Main.SCREEN_WIDTH+2*Main.TEXTURE_SIZE; x+=Main.TEXTURE_SIZE) {
             if(!generator.generated(x/Main.TEXTURE_SIZE)){
                 //System.out.println("generated blocks at x pos " + x/Main.TEXTURE_SIZE);
-                generator.generate(x/ Main.TEXTURE_SIZE);
+                generator.generate(x/Main.TEXTURE_SIZE);
+                for(int y = initY-2*Main.TEXTURE_SIZE; y < initY+2*Main.SCREEN_HEIGHT; y+=Main.TEXTURE_SIZE){
+                    vec.add(new org.joml.Vector2i(x,y));
+                }
             }
-
-
         }
+        System.out.println(vec);
+        caveGenerator.setLoaded(vec);
+        caveGenerator.generateCave();
     }
 
     public void tick(){
+        //System.out.println("pos: " + player.getPos().copy().divide(32));
         player.tick(camera);
-        player.collideWithTiles(this);
+        //player.collideWithTiles(this);
     }
     public BoundingBox getTileBoundingBox(int x, int y) {
         try {
@@ -99,5 +112,8 @@ public class World{
         camera.renderWorld(Main.SCREEN_WIDTH, Main.SCREEN_HEIGHT);
         player.render();
         //player.render();
+    }
+    public CaveGenerator getCaveGenerator(){
+        return caveGenerator;
     }
 }

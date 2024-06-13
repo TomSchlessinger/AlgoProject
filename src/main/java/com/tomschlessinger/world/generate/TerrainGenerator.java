@@ -39,42 +39,52 @@ public class TerrainGenerator {
     //cave carver can be a modified dfs
     public void generateSurface(int x){
         for(int y = CAVE_DEPTH; y < SURFACE_HEIGHT; y++){
-            world.setTile(x,y,
-                    new TileState(new BoundingBox(new Vector2f(x,-getRealY(y)), new Vector2f(16f)),
-                        TileRegistry.getTile("dirt"))
-            );
+            if(!world.getCaveGenerator().getGenerated().contains(new Vector2i(x,y))){
+                world.setTile(x,y,
+                        new TileState(new BoundingBox(new Vector2f(x,getRealY(y)), new Vector2f(16f)),
+                                TileRegistry.getTile("dirt"))
+                );
+            }
         }
         surface.put(x,5d*noise.noise(x/10f,SURFACE_HEIGHT/10f)+5f);
         //System.out.println("surface: " + surface);
         for(int y = SURFACE_HEIGHT; y < SURFACE_HEIGHT+surface.get(x); y++){
-            world.setTile(x,y,
-                    new TileState(new BoundingBox(new Vector2f(x, getRealY(y)), new Vector2f(16f)),
-                            TileRegistry.getTile("grass"))
-            );
+            if(!world.getCaveGenerator().getGenerated().contains(new Vector2i(x,y))){
+                world.setTile(x,y,
+                        new TileState(new BoundingBox(new Vector2f(x,getRealY(y)), new Vector2f(16f)),
+                                TileRegistry.getTile("caves"))
+                );
+            }
         }
     }
     public void generateCaves(int x){
         for(int y = DEEP_CAVE_DEPTH; y < CAVE_DEPTH; y++){
-            world.setTile(x,y,
-                    new TileState(new BoundingBox(new Vector2f(x,getRealY(y)), new Vector2f(16f)),
-                            TileRegistry.getTile("stone"))
-            );
+            if(!world.getCaveGenerator().getGenerated().contains(new Vector2i(x,y))){
+                world.setTile(x,y,
+                        new TileState(new BoundingBox(new Vector2f(x,getRealY(y)), new Vector2f(16f)),
+                                TileRegistry.getTile("stone"))
+                );
+            }
         }
     }
     public void generateDeepCaves(int x){
         for(int y = HELL_DEPTH; y < DEEP_CAVE_DEPTH; y++){
-            world.setTile(x,y,
-                    new TileState(new BoundingBox(new Vector2f(x,getRealY(y)), new Vector2f(16f)),
-                            TileRegistry.getTile("hard_stone"))
-            );
+            if(!world.getCaveGenerator().getGenerated().contains(new Vector2i(x,y))){
+                world.setTile(x,y,
+                        new TileState(new BoundingBox(new Vector2f(x,getRealY(y)), new Vector2f(16f)),
+                                TileRegistry.getTile("hard_stone"))
+                );
+            }
         }
     }
     public void generateHell(int x){
         for(int y = 0; y < HELL_DEPTH; y++){
-            world.setTile(x,y,
-                    new TileState(new BoundingBox(new Vector2f(x,getRealY(y)), new Vector2f(16f)),
-                            TileRegistry.getTile("hell"))
-            );
+            if(!world.getCaveGenerator().getGenerated().contains(new Vector2i(x,y))){
+                world.setTile(x,y,
+                        new TileState(new BoundingBox(new Vector2f(x,getRealY(y)), new Vector2f(16f)),
+                                TileRegistry.getTile("hell"))
+                );
+            }
         }
     }
 
