@@ -52,7 +52,7 @@ public class TerrainGenerator {
             if(!world.getCaveGenerator().getGenerated().contains(new Vector2i(x,y))){
                 world.setTile(x,y,
                         new TileState(new BoundingBox(new Vector2f(x,getRealY(y)), new Vector2f(16f)),
-                                TileRegistry.getTile("caves"))
+                                TileRegistry.getTile("grass"))//I love when i do a stupid and put "caves" instead of grass
                 );
             }
         }

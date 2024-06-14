@@ -47,6 +47,8 @@ public class Main {
     public static final int SCREEN_HEIGHT = 1000;
 //    public static final int WORLD_WIDTH = 2000;
     public static final int WORLD_HEIGHT = 500;
+    public static final int CAVE_DISTANCE_THRESHOLD = 50;
+
     private long window;
 //    private TerrainGenerator terrainGenerator;
     private World world;
@@ -155,6 +157,7 @@ public class Main {
         long elapsedMSPFCounter;//FPS Counter
         long elapsedMSPT;//TPS Cap
         long elapsedMSPTCounter;//TPS Counter
+        world.getCaveGenerator().generateCave(30,400,10);
         while (!glfwWindowShouldClose(window)) {
             world.tick();
             long time2 = Timer.getMillis();
@@ -198,7 +201,6 @@ public class Main {
 
 
             generateTerrain(camera.getWorldPos().getX(), camera.getWorldPos().getY());
-            world.getCaveGenerator().generateCave(30,400,10);
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
             if(MAX_FPS > 0){

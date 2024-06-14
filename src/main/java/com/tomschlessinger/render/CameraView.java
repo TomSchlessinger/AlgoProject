@@ -24,7 +24,7 @@ public class CameraView {
     private final World world;
     public CameraView(World world) {
         this.world = world;
-        offset = Vector2i.ZERO.copy().add(20,32*390);
+        offset = Vector2i.ZERO.copy().add(20,32*450);
         pos = Vector2i.ZERO.copy();
         renderingQueue = new HashMap<>();
     }
@@ -44,6 +44,7 @@ public class CameraView {
         for(int x = -Main.TEXTURE_SIZE; x < width+Main.TEXTURE_SIZE; x+=Main.TEXTURE_SIZE) {
             for(int y = -Main.TEXTURE_SIZE; y < height+Main.TEXTURE_SIZE; y+=Main.TEXTURE_SIZE){ //x,y are pos on the screen; pos + x,y --> world position; (pos+x,y)/32 --> block pos
                 TileState tile = world.getTile(getPos().add(x,y).divide(Main.TEXTURE_SIZE));
+                //System.out.println("gonna render: " + tile.getTile());
                 if(!renderingQueue.containsKey(tile)){
                     renderingQueue.put(tile, new HashSet<>());
                 }
@@ -55,6 +56,7 @@ public class CameraView {
 //        System.out.println("TILE AT " + pos.copy().add(width,height).divide(Main.TEXTURE_SIZE) + " is " + world.getTile(pos.copy().add(width,height).divide(Main.TEXTURE_SIZE)));
         renderingQueue.forEach(
                 (tile, posList) -> {
+                    //System.out.println("tryna render: " + tile);
                     tile.getTile().bind();
                     glBegin(GL_QUADS);
                     posList.forEach(

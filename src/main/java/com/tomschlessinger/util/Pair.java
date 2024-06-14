@@ -2,9 +2,26 @@ package com.tomschlessinger.util;
 
 import java.util.Objects;
 
-public record Pair<A,B>(A left, B right) {
+public class Pair<A,B> {
+    private A left;
+    private B right;
+
+    public Pair(A left, B right){
+        this.left=left;
+        this.right=right;
+    }
+
     public A getLeft(){return left;}
     public B getRight(){return right;}
+    public void setLeft(A left){this.left=left;}
+    public void setRight(B right){this.right=right;}
+    public void set(A left, B right){
+        setLeft(left);
+        setRight(right);
+    }
+    public void set(Pair<A,B> pair){
+        set(pair.getLeft(),pair.getRight());
+    }
 
     @Override
     public boolean equals(Object other){

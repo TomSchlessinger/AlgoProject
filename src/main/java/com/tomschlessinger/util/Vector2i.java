@@ -1,5 +1,7 @@
 package com.tomschlessinger.util;
 
+import org.joml.Math;
+
 import java.util.Objects;
 
 public class Vector2i {
@@ -108,5 +110,10 @@ public class Vector2i {
     @Override
     public int hashCode() {
         return Objects.hash(x, y);
+    }
+    public double distance(int x, int y) {
+        int dx = this.x - x;
+        int dy = this.y - y;
+        return Math.sqrt(dx * dx + dy * dy);
     }
 }

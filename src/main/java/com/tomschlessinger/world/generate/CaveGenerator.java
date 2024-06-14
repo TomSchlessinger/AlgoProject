@@ -5,10 +5,12 @@ import com.tomschlessinger.random.PerlinNoiseGenerator;
 import com.tomschlessinger.tile.TileRegistry;
 import com.tomschlessinger.tile.TileState;
 import com.tomschlessinger.util.HashMapPair;
+import com.tomschlessinger.util.Pair;
 import com.tomschlessinger.world.World;
 import org.joml.Random;
 import org.joml.Vector2f;
-import org.joml.Vector2i;
+import com.tomschlessinger.util.Vector2i;
+import org.lwjgl.Sys;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -21,10 +23,11 @@ public class CaveGenerator {
     private final Random random;
     private final PerlinNoiseGenerator noise;
     private final HashMapPair.Vector2iHashMap<Integer> coords = new HashMapPair.Vector2iHashMap<>();
-    private final Set<Vector2i> loaded = new HashSet<>();
+    //private final Set<Vector2i> loaded = new HashSet<>();
     private final Set<Vector2i> generated = new HashSet<>();
     private final Set<Vector2i> genQueue = new HashSet<>();
-    private final Set<com.tomschlessinger.util.Vector2i> caves = new HashSet<>();
+    private final Set<Vector2i> caves = new HashSet<>();
+    private final Pair<Vector2i,Vector2i> loaded = new Pair<>(Vector2i.ZERO.copy(),Vector2i.ZERO.copy());
     public CaveGenerator(World world, long seed){
         this.world=world;
         this.seed=seed;
@@ -40,7 +43,7 @@ public class CaveGenerator {
         for(int cX = x-r; cX < x+r; cX++){
             for(int cY = y-r; cY < y+r; cY++){
                 if(new Vector2i(x,y).distance(cX,cY)<=r){
-                    caves.add(new com.tomschlessinger.util.Vector2i(cX,cY));
+                    caves.add(new Vector2i(cX,cY));
                     world.setTile(cX,cY, new TileState(
                                     new BoundingBox(new Vector2f(0), new Vector2f(0)),
                                     TileRegistry.getTile("air")
@@ -55,15 +58,16 @@ public class CaveGenerator {
     }
 
     public float sillyNoise(double d){
-        int maxmin = 50;
-        Random r = new Random((long)d);
-        float j = r.nextFloat()%(2*maxmin+1)-maxmin;
-        return j;
+        int maxMin = 50;
+        Random r = new Random((long)d*seed);
+        return r.nextFloat()%(2*maxMin+1)-maxMin;
     }
     public void generateCave(int x, int y){
+//        System.out.println("x y = " + new Vector2i(x,y));
         if(generated.contains(new Vector2i(x,y)))return;
-        if(!loaded.contains(new Vector2i(x,y))){
+        if(!isLoaded(new Vector2i(x,y))){
             genQueue.add(new Vector2i(x,y));
+            System.out.println("added to queue");
             return;
         }
         int size =(int)(50d*noise.noise(sillyNoise(x*x+x+x+y),sillyNoise(y*y+y+y+x)));//I HAVE NO IDEA WHAT IM DOING
@@ -72,17 +76,15 @@ public class CaveGenerator {
 //        System.out.println("old indexes: " + index1 +" " + index2);
 //        System.out.println("generated cave at (" + x + ", "+ y +") with radius " + size);
         size = (int)constrain(size,0,25);
-        int ind1 = (int)constrain((long)map(index1,-60,60,0,2 * size - 1),0,(long)size*2-1)-size;
-        int ind2 = (int)constrain((long)map(index2,-60,60,0,2 * size - 1),0,(long)size*2-1)-size;
+        int ind1 = (int)constrain((long)map(index1,-30,30,0,2 * size - 1),0,(long)size*2-1)-size+x;
+        int ind2 = (int)constrain((long)map(index2,-30,30,0,2 * size - 1),0,(long)size*2-1)-size+y;
 //        System.out.println("new indexes: " + ind1 +" " + ind2);
-//        System.out.println("generated cave at (" + x + ", "+ y +") with radius " + size);
-        coords.put(x,y,size);
         generated.add(new Vector2i(x,y));
-        if(!loaded.contains(new Vector2i(ind1,ind2))){
-            genQueue.add(new Vector2i(ind1,ind2));
-        }else{
-            generateCave(ind1, ind2);
-        }
+        System.out.println("generated cave at (" + x + ", "+ y +") with radius " + size);
+        if(isLoaded(new Vector2i(x,y))) generateCave(x,y,size);
+        else coords.put(x,y,size);
+        generateCave(ind1, ind2);
+
         generateCave();
     }
 
@@ -91,16 +93,24 @@ public class CaveGenerator {
         //System.out.println("queue: " + genQueue);
         Set<Vector2i> remQueue = new HashSet<>();
         genQueue.forEach(
-                vec -> {
-                    //System.out.println(loaded);
-                    if(loaded.contains(vec)) {
-                        generateCave(vec.x,vec.y,coords.get(vec.x,vec.y));
-                        remQueue.add(vec);
-                        generated.add(vec);
-                    }
+            vec -> {
+                //System.out.println(vec);
+                //System.out.println(isLoaded(vec));
+                System.out.println("min: " + loaded.getLeft() + " max: " + loaded.getRight());
+                if(isLoaded(vec)) {
+                    if(coords.containsKey(vec.getX(),vec.getY()))
+                        generateCave(vec.getX(),vec.getY(),coords.get(vec.getX(),vec.getX()));
+                    else generateCave(vec.getX(), vec.getY());
+                    remQueue.add(vec);
+                    generated.add(vec);
                 }
+            }
         );
         remQueue.forEach(genQueue::remove);
+    }
+
+    public boolean isLoaded(Vector2i vec){
+        return World.isLoaded(vec,loaded.getLeft().copy(),loaded.getRight().copy());
     }
 
     double map(double x, double in_min, double in_max, double out_min, double out_max) {
@@ -110,12 +120,15 @@ public class CaveGenerator {
         return ((x)<(x_min)?(x_min):(Math.min((x), (x_max))));
     }
 
-    public void setLoaded(Set<Vector2i> loaded){
-        this.loaded.clear();
-        this.loaded.addAll(loaded);
+    public void setLoaded(Vector2i min, Vector2i max){
+        this.loaded.set(min,max);
     }
 
-    public Set<com.tomschlessinger.util.Vector2i> getGenerated(){
+    public Set<Vector2i> getGenerated(){
         return caves;
+    }
+
+    public Set<Vector2i> getQueue(){
+        return genQueue;
     }
 }
