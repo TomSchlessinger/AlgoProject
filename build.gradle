@@ -113,3 +113,14 @@ dependencies {
     implementation 'slick-util:slick-util:1.0.0'
     implementation 'org.slick2d:slick2d-core:1.0.1'
 }
+
+shadowJar {
+    archiveBaseName = 'terraria-bad'
+    archiveClassifier = ''
+    archiveVersion = ''
+
+    manifest {
+        attributes 'Main-Class': 'com.tomschlessinger.Main'
+    }
+    exclude 'META-INF/*.DSA', 'META-INF/*.RSA', 'META-INF/*.SF'
+}
