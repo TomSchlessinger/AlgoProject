@@ -84,8 +84,8 @@ public class World{
 //        System.out.println("max: " + new Vector2i(initX+Main.SCREEN_WIDTH+2*Main.TEXTURE_SIZE,initY+2*Main.TEXTURE_SIZE+Main.SCREEN_HEIGHT).subtract(camera.getOffset()).divide(32));
 
         caveGenerator.setLoaded(
-                new Vector2i(initX-2*Main.TEXTURE_SIZE,initY-2*Main.TEXTURE_SIZE).add(camera.getOffset()).divide(Main.TEXTURE_SIZE),
-                new Vector2i(initX+Main.SCREEN_WIDTH+2*Main.TEXTURE_SIZE,initY+2*Main.TEXTURE_SIZE+Main.SCREEN_HEIGHT).add(camera.getOffset()).divide(Main.TEXTURE_SIZE)
+                new Vector2i(initX-20*Main.TEXTURE_SIZE,initY-20*Main.TEXTURE_SIZE).subtract(camera.getOffset()).divide(Main.TEXTURE_SIZE),
+                new Vector2i(initX+Main.SCREEN_WIDTH+20*Main.TEXTURE_SIZE,initY+20*Main.TEXTURE_SIZE+Main.SCREEN_HEIGHT).subtract(camera.getOffset()).divide(Main.TEXTURE_SIZE)
         );
         //System.out.println("initX: " + initX + " y " + initY);
         //Set<Vector2i> vec = new HashSet<>();
@@ -106,7 +106,7 @@ public class World{
         combined.forEach(
                 (vec) -> minDist.set(Math.min(minDist.get(), vec.distance(initX/32, initY/32)))
         );
-        System.out.println(minDist.get());
+        //System.out.println(minDist.get());
         if(minDist.get() > Main.CAVE_DISTANCE_THRESHOLD){
             Random random = new Random(seed);
 //            System.out.println("generating new cave");

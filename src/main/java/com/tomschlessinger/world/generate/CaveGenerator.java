@@ -67,7 +67,7 @@ public class CaveGenerator {
         if(generated.contains(new Vector2i(x,y)))return;
         if(!isLoaded(new Vector2i(x,y))){
             genQueue.add(new Vector2i(x,y));
-            System.out.println("added to queue");
+            //System.out.println("added to queue");
             return;
         }
         int size =(int)(50d*noise.noise(sillyNoise(x*x+x+x+y),sillyNoise(y*y+y+y+x)));//I HAVE NO IDEA WHAT IM DOING
@@ -96,7 +96,7 @@ public class CaveGenerator {
             vec -> {
                 //System.out.println(vec);
                 //System.out.println(isLoaded(vec));
-                System.out.println("min: " + loaded.getLeft() + " max: " + loaded.getRight());
+                //System.out.println("min: " + loaded.getLeft() + " max: " + loaded.getRight());
                 if(isLoaded(vec)) {
                     if(coords.containsKey(vec.getX(),vec.getY()))
                         generateCave(vec.getX(),vec.getY(),coords.get(vec.getX(),vec.getX()));

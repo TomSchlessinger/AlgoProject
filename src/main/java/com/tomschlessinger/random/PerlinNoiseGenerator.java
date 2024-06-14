@@ -1,3 +1,6 @@
+//I can't find who I took this from, but this isn't my code. Of course, the Perlin Noise Generation algorithm is a very
+// well-known algorithm, so this code wouldn't have been unique even if I had written it myself
+
 package com.tomschlessinger.random;
 
 import java.util.Random;
